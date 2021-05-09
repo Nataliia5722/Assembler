@@ -1,0 +1,76 @@
+﻿.org 1000
+ST: .dw 0
+AST: .dw 1000
+
+.org 10
+x: .dw 2
+y: .dw 3
+z: .dw 1
+v: .dw 4 
+
+c:
+ LDA x
+ ADD y
+ STA y
+ CALL p
+ LDA y
+ OUT #0
+HALT
+
+p:
+ STL @AST 
+ LDA AST
+ SUB #2
+ STA AST
+ LDA z
+ ADD y
+ STA y
+ CALL k
+ LDA AST
+ ADD #2
+ STA AST 
+ LDL @AST
+ RET
+
+k: 
+ STL @AST 
+ LDA AST
+ SUB #2
+ LDA v
+ ADD y
+ STA y
+ LDA AST
+ ADD #2
+ STA AST 
+ LDL @AST
+ RET 
+.END c
+
+-----------------------------------------------------------------------------------------------------------------
+Нахождение n-того числа Фибоначчи используя стек возврата
+.START 1000
+st: .dw 0, 0
+ast: .dw 0
+
+.START 0
+a: .dw 0
+b: .dw 1
+n: .dw 8
+
+start: MOV ast, &st
+begin:
+	ADD a, b
+	MOV ast, %A
+ 	MOV a, b
+	MOV b, ast
+	ADD ast, &2
+	MOV ast, %A
+	SUB n, &1
+	MOV n, %A
+	JE n, &1, end
+	JNE n, &1, begin
+
+end:
+	OUT b
+STOP
+.END begin
